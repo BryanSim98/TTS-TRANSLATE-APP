@@ -74,14 +74,79 @@ languages.forEach(({code, name}) => {
 // Load available voices
 let voices = [];
 let allVoices = []; // Store all voices for filtering
+let voicesLoaded = false;
 
 function loadVoices() {
     voices = speechSynthesis.getVoices();
     allVoices = [...voices]; // Keep a copy of all voices
     
-    // Initialize with current language selection
-    const currentLanguage = languageSelect.value || 'en';
-    filterAndPopulateVoices(currentLanguage);
+    console.log(`Loaded ${voices.length} voices on mobile`);
+    
+    if (voices.length > 0) {
+        voicesLoaded = true;
+        // Initialize with current language selection
+        const currentLanguage = languageSelect.value || 'en';
+        filterAndPopulateVoices(currentLanguage);
+    } else {
+        // Mobile Chrome: voices might not be loaded yet, try again
+        console.log('No voices loaded yet, retrying...');
+        setTimeout(() => {
+            loadVoices();
+        }, 100);
+    }
+}
+
+// Enhanced mobile-friendly voice loading
+function initializeVoicesForMobile() {
+    // Try multiple approaches for mobile compatibility
+    const attemptVoiceLoad = () => {
+        const currentVoices = speechSynthesis.getVoices();
+        
+        if (currentVoices.length > 0 && !voicesLoaded) {
+            console.log('Voices loaded successfully on mobile');
+            voices = currentVoices;
+            allVoices = [...currentVoices];
+            voicesLoaded = true;
+            
+            const currentLanguage = languageSelect.value || 'en';
+            filterAndPopulateVoices(currentLanguage);
+            return true;
+        }
+        return false;
+    };
+    
+    // Immediate attempt
+    if (attemptVoiceLoad()) return;
+    
+    // Set up event listener
+    speechSynthesis.onvoiceschanged = () => {
+        console.log('Voices changed event fired');
+        attemptVoiceLoad();
+    };
+    
+    // Fallback polling for mobile browsers
+    let attempts = 0;
+    const maxAttempts = 20;
+    const pollInterval = setInterval(() => {
+        attempts++;
+        console.log(`Voice loading attempt ${attempts}/${maxAttempts}`);
+        
+        if (attemptVoiceLoad()) {
+            clearInterval(pollInterval);
+        } else if (attempts >= maxAttempts) {
+            clearInterval(pollInterval);
+            console.warn('Failed to load voices after maximum attempts');
+            updateStatus('Voice loading failed. Using system default.', 'warning');
+        }
+    }, 250);
+    
+    // User interaction trigger (mobile often requires this)
+    document.addEventListener('click', () => {
+        if (!voicesLoaded) {
+            console.log('Attempting voice load on user interaction');
+            attemptVoiceLoad();
+        }
+    }, { once: true });
 }
 
 // Filter voices based on selected language
@@ -115,6 +180,12 @@ function getVoicesForLanguage(targetLanguage) {
 
 // Populate voice select with filtered voices
 function filterAndPopulateVoices(targetLanguage) {
+    if (!voicesLoaded) {
+        console.log('Voices not loaded yet, skipping voice population');
+        updateStatus('Loading voices...', 'info');
+        return;
+    }
+    
     const filteredVoices = getVoicesForLanguage(targetLanguage);
     
     // Clear and populate voice select
@@ -139,8 +210,12 @@ function filterAndPopulateVoices(targetLanguage) {
             updateStatus(`${filteredVoices.length} ${getLanguageName(targetLanguage)} voice${filteredVoices.length > 1 ? 's' : ''} available`);
         }
     } else {
-        // No voices found for this language
-        updateStatus(`No specific voices found for ${getLanguageName(targetLanguage)}. Using system default.`, 'warning');
+        // No voices found for this language - check if it's because voices aren't loaded
+        if (allVoices.length === 0) {
+            updateStatus('Voices still loading...', 'info');
+        } else {
+            updateStatus(`No specific voices found for ${getLanguageName(targetLanguage)}. Using system default.`, 'warning');
+        }
     }
 }
 
@@ -254,9 +329,8 @@ async function translateText() {
     }
 }
 
-// Trigger loading voices when they become available
-speechSynthesis.onvoiceschanged = loadVoices;
-loadVoices();
+// Initialize voice loading with mobile-friendly approach
+initializeVoicesForMobile();
 
 // TTS with enhanced voice handling
 function playText(text, voiceIndex) {
@@ -352,6 +426,11 @@ playButton.addEventListener('click', async() => {
     }
 });
 
+// Detect mobile browser
+function isMobileBrowser() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
 // Initialize everything when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize theme
@@ -364,8 +443,13 @@ document.addEventListener('DOMContentLoaded', () => {
         filterAndPopulateVoices(defaultLang);
     }
     
-    // Update status
-    updateStatus('Ready to translate', 'success');
+    // Show mobile-specific guidance
+    if (isMobileBrowser()) {
+        console.log('Mobile browser detected - enhanced voice loading active');
+        updateStatus('Loading voices for mobile...', 'info');
+    } else {
+        updateStatus('Ready to translate', 'success');
+    }
 });
 
 // Handle system theme changes
