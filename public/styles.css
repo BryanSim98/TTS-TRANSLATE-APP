@@ -1,0 +1,309 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Dark mode color variables */
+:root {
+    --bg-light: rgb(248 250 252);
+    --bg-dark: rgb(17 24 39);
+    --text-light: rgb(51 65 85);
+    --text-dark: rgb(229 231 235);
+    --border-light: rgb(226 232 240);
+    --border-dark: rgb(75 85 99);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Theme toggle button animations */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-2px);
+    }
+}
+
+#themeToggle {
+    animation: float 3s ease-in-out infinite;
+}
+
+#themeToggle:hover {
+    animation: none;
+    transform: scale(1.1);
+}
+
+/* Custom scrollbar for textarea */
+textarea::-webkit-scrollbar {
+    width: 6px;
+}
+
+textarea::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.dark textarea::-webkit-scrollbar-track {
+    background: #374151;
+}
+
+textarea::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+.dark textarea::-webkit-scrollbar-thumb {
+    background: #6b7280;
+}
+
+textarea::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.dark textarea::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+/* Enhanced focus states */
+select:focus,
+textarea:focus {
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.dark select:focus,
+.dark textarea:focus {
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+}
+
+/* Button ripple effect */
+button {
+    position: relative;
+    overflow: hidden;
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: width 0.6s, height 0.6s;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+button:active::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* Status indicator animations */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.status-pulse {
+    animation: pulse 2s infinite;
+}
+
+/* Improved button disabled state */
+button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+button:disabled::before {
+    display: none;
+}
+
+/* Loading animation */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* Enhanced hover effects for voice select */
+select option {
+    padding: 8px;
+    background-color: white;
+    color: black;
+}
+
+.dark select option {
+    background-color: #374151;
+    color: white;
+}
+
+select option:hover {
+    background-color: #eff6ff;
+}
+
+.dark select option:hover {
+    background-color: #4b5563;
+}
+
+/* Character count styling */
+#charCount {
+    transition: color 0.3s ease;
+}
+
+#charCount.text-yellow-500 {
+    animation: pulse 2s infinite;
+}
+
+#charCount.text-red-500 {
+    animation: pulse 1s infinite;
+}
+
+/* Enhanced card shadows for dark mode */
+.dark .shadow-xl {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, opacity 0.3s ease;
+}
+
+/* Theme toggle specific styles */
+#themeToggle svg {
+    transition: all 0.3s ease;
+}
+
+#themeToggle:hover svg {
+    transform: rotate(15deg) scale(1.1);
+}
+
+/* Voice select visual feedback */
+.voice-selected {
+    border-color: #10b981 !important;
+    background-color: #f0fdf4;
+}
+
+.dark .voice-selected {
+    background-color: #064e3b;
+}
+
+/* Loading overlay improvements */
+#loadingOverlay {
+    backdrop-filter: blur(4px);
+    transition: opacity 0.3s ease;
+}
+
+/* Status bar enhancements */
+.status-indicator {
+    transition: all 0.3s ease;
+}
+
+/* Better mobile responsiveness */
+@media (max-width: 768px) {
+    #themeToggle {
+        bottom: 1rem;
+        right: 1rem;
+        width: 48px;
+        height: 48px;
+    }
+    
+    #themeToggle svg {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .grid-cols-1.md\\:grid-cols-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    button {
+        border: 2px solid;
+    }
+    
+    select, textarea {
+        border-width: 2px;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    #themeToggle {
+        animation: none;
+    }
+}
+
+/* Voice count indicator */
+.voice-count {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
+}
+
+.dark .voice-count {
+    color: #9ca3af;
+}
+
+/* Success/Error state animations */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.error-shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
+.success-bounce {
+    animation: bounce 0.6s ease-in-out;
+}

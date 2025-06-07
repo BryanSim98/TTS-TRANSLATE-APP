@@ -6,42 +6,127 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="styles.css">
     <title>TTS & Translation App</title>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.4s ease-out',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center h-screen">
-    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 class="text-gray-800 text-2xl font-semibold mb-4 text-center">
-            TTS & Translation App
-        </h1>
-       
-        <!-- Text Input -->
-        <textarea class="w-full h-32 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-        placeholder="Enter text to translate and hear it speak..."
-        ></textarea>
-
-        <!-- Language Select -->
-        <div class="mb-4">
-            <label for="languageSelect" class="block text-sm font-medium text-gray-700 mb-2">Select Language</label>
-            <select id="languageSelect" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-            </select>
+<body class="bg-blue-100 dark:bg-gray-900 min-h-screen flex items-center justify-center p-4 transition-all duration-300">
+    <div class="w-full max-w-lg">
+        <!-- Header -->
+        <div class="text-center mb-8 animate-fade-in">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-600 dark:bg-gray-700 rounded-full mb-4 shadow-lg">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                </svg>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">
+                TTS & Translation
+            </h1>
+            <p class="text-gray-600 dark:text-gray-400">Translate text and hear it spoken aloud</p>
         </div>
 
-        <!-- Voice Select -->
-        <div class="mb-4">
-            <label for="voiceSelect" class="block text-sm font-medium text-gray-700 mb-2">Select Voice</label>
-            <select id="voiceSelect" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="default">Default Voice</option>
-                <option value="Voice 1">Voice 1</option>
-                <option value="Voice 2">Voice 2</option>
-            </select>
+        <!-- Main Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden animate-slide-up">
+            <div class="p-8">
+                <!-- Text Input -->
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                        Enter your text
+                    </label>
+                    <div class="relative">
+                        <textarea 
+                            class="w-full h-32 p-4 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:focus:ring-gray-600 resize-none transition-all duration-200 placeholder-gray-400 dark:placeholder-gray-500"
+                            placeholder="Type something to translate and hear it spoken..."
+                            rows="4"
+                        ></textarea>
+                        <div class="absolute bottom-3 right-3 text-xs text-gray-400 dark:text-gray-500">
+                            <span id="charCount">0</span> characters
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <!-- Language Select -->
+                    <div>
+                        <label for="languageSelect" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            🌍 Target Language
+                        </label>
+                        <select id="languageSelect" class="w-full p-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:focus:ring-gray-600 transition-all duration-200 bg-white">
+                        </select>
+                    </div>
+
+                    <!-- Voice Select -->
+                    <div>
+                        <label for="voiceSelect" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            🎤 Voice Style
+                        </label>
+                        <select id="voiceSelect" class="w-full p-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:focus:ring-gray-600 transition-all duration-200 bg-white">
+                            <option value="">Default Voice</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <button 
+                    class="w-full bg-blue-600 hover:bg-blue-700 dark:bg-gray-700 dark:hover:bg-gray-600 text-white font-semibold p-4 rounded-xl transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] flex items-center justify-center space-x-2"
+                    id="playButton"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                    </svg>
+                    <span>Translate & Speak</span>
+                </button>
+            </div>
+
+            <!-- Status Bar -->
+            <div class="bg-gray-50 dark:bg-gray-900 px-8 py-4 border-t border-gray-100 dark:border-gray-700">
+                <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 bg-blue-400 dark:bg-gray-400 rounded-full"></div>
+                        <span id="statusText">Ready to translate</span>
+                    </div>
+                    <div class="text-xs text-gray-400 dark:text-gray-500">
+                        Powered by Google Translate
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Translation Button -->
-        <button class="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors"
-        id="playButton"
-        >
-            Translate & Speak
-        </button>
+        <!-- Footer -->
+        <div class="text-center mt-8 text-sm text-gray-500 dark:text-gray-400">
+            <p>Support for multiple languages and voices</p>
+        </div>
+    </div>
+
+    <!-- Dark Mode Toggle Button -->
+    <button id="themeToggle" class="fixed bottom-6 right-6 w-12 h-12 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group">
+        <!-- Sun Icon (Light Mode) -->
+        <svg class="w-6 h-6 text-yellow-500 dark:hidden transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+        <!-- Moon Icon (Dark Mode) -->
+        <svg class="w-6 h-6 text-blue-400 hidden dark:block transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+        </svg>
+    </button>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 flex items-center space-x-4 shadow-2xl">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span class="text-gray-700 dark:text-gray-300 font-medium">Processing...</span>
+        </div>
     </div>
 
     <script src="script.js"></script>
